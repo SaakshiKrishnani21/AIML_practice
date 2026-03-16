@@ -1,0 +1,9 @@
+is_human_there=input("Is Human present?(yes/no)").lower()
+is_daylight_there=input("Is there sunlight available?(yes/no)").lower()
+
+# Check the condition
+if is_human_there=="yes" and is_daylight_there=="no" :
+    print("Light On")
+
+else:
+    print("Light Off")
