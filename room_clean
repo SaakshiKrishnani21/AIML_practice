@@ -1,0 +1,21 @@
+#Get the input
+is_roomA_clean=input("Is Room A clean?(clean/dirty):").lower()
+is_roomB_clean=input("Is Room B clean?(clean/dirty):").lower()
+
+#check the condition
+
+if is_roomA_clean=="clean":
+    print("Moving to Room B as Room A is clean")
+    if is_roomB_clean=="dirty":
+        print("Cleaning Room B")
+    else:
+        print("Both the rooms are Clean")
+
+else:
+    print("Cleaning Room A")
+    if is_roomB_clean=="dirty":
+        print("Cleaning Room B")
+    else:
+        print("Both the rooms are Clean")
+
+print("Both the Rooms are Clean")
