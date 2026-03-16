@@ -1,0 +1,81 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
+
+# Load dataset
+df = pd.read_csv("StudentsPerformance.csv") # Changed path to a relative one
+
+# Create Pass/Fail column
+df["Pass"] = ((df["math score"] + df["reading score"] + df["writing score"]) / 3 >= 50).astype(int)
+
+# Features and Target
+X = df[["math score", "reading score", "writing score"]]
+y = df["Pass"]
+
+# Train-Test Split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train Decision Tree
+model = DecisionTreeClassifier(max_depth=3)
+model.fit(X_train, y_train)
+
+# Prediction
+y_pred = model.predict(X_test)
+
+# Accuracy
+print("Test Accuracy:", accuracy_score(y_test, y_pred))
+
+# Confusion Matrix
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
+
+# Create confusion matrix
+cm = confusion_matrix(y_test, y_pred)
+
+# Plot matrix diagram
+plt.figure(figsize=(5,4))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+            xticklabels=["Fail","Pass"],
+            yticklabels=["Fail","Pass"])
+
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.title("Confusion Matrix")
+plt.show()
+
+# Precision, Recall, F1-score
+print("\nPrecision, Recall, F1-score:")
+print(classification_report(y_test, y_pred))
+
+# Overfitting vs Underfitting Analysis
+train_acc = model.score(X_train, y_train)
+test_acc = model.score(X_test, y_test)
+
+print("\nTraining Accuracy:", train_acc)
+print("Testing Accuracy:", test_acc)
+
+if train_acc > test_acc:
+    print("Model may be Overfitting")
+elif train_acc < test_acc:
+    print("Model may be Underfitting")
+else:
+    print("Model is Balanced")
+
+
+from sklearn.tree import plot_tree
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(20,10))
+plot_tree(model, # Using the 'model' trained in the previous cell
+          feature_names=X.columns, # Using 'X.columns' from the previous cell
+          class_names=['Fail', 'Pass'],
+          filled=True,
+          rounded=True,
+          fontsize=10)
+plt.title("Short and Simple Decision Tree for Student Pass/Fail Prediction")
+plt.show()
