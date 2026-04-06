@@ -1,0 +1,100 @@
+  # ----------------------------
+# Import libraries
+# ----------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+
+from sklearn.datasets import load_digits
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+from mpl_toolkits.mplot3d import Axes3D
+
+# ----------------------------
+# Load high dimensional dataset
+# ----------------------------
+digits = load_digits()
+X = digits.data
+y = digits.target
+
+print("Original shape:", X.shape)
+
+# ----------------------------
+# Train test split
+# ----------------------------
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# ----------------------------
+# Model BEFORE PCA
+# ----------------------------
+model = LogisticRegression(max_iter=5000)
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+before_acc = accuracy_score(y_test, y_pred)
+
+print("Accuracy before PCA:", before_acc)
+
+# ----------------------------
+# Standardize data
+# ----------------------------
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# ----------------------------
+# Apply PCA (2D)
+# ----------------------------
+pca_2 = PCA(n_components=2)
+X_pca_2 = pca_2.fit_transform(X_scaled)
+
+# ----------------------------
+# 2D Visualization
+# ----------------------------
+plt.figure(figsize=(7,5))
+plt.scatter(X_pca_2[:,0], X_pca_2[:,1], c=y, cmap='viridis')
+plt.title("PCA 2D Projection")
+plt.xlabel("PC1")
+plt.ylabel("PC2")
+plt.show()
+
+# ----------------------------
+# Apply PCA (3D)
+# ----------------------------
+pca_3 = PCA(n_components=3)
+X_pca_3 = pca_3.fit_transform(X_scaled)
+
+# ----------------------------
+# 3D Visualization
+# ----------------------------
+fig = plt.figure(figsize=(7,5))
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(X_pca_3[:,0], X_pca_3[:,1], X_pca_3[:,2], c=y)
+ax.set_title("PCA 3D Projection")
+plt.show()
+
+# ----------------------------
+# Apply PCA for training
+# ----------------------------
+pca = PCA(n_components=20)
+X_pca = pca.fit_transform(X_scaled)
+
+X_train_pca, X_test_pca, y_train, y_test = train_test_split(
+    X_pca, y, test_size=0.2, random_state=42
+)
+
+# ----------------------------
+# Model AFTER PCA
+# ----------------------------
+model2 = LogisticRegression(max_iter=5000)
+model2.fit(X_train_pca, y_train)
+
+y_pred2 = model2.predict(X_test_pca)
+after_acc = accuracy_score(y_test, y_pred2)
+
+print("Accuracy after PCA:", after_acc)
+
